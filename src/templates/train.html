@@ -1,0 +1,121 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<section class="content file_manager">
+    <div class="block-header">
+        <div class="row">
+            <div class="col-lg-7 col-md-6 col-sm-12">
+                <h2>Entrenamiento</h2>
+            </div>
+            <div class="col-lg-5 col-md-6 col-sm-12">
+                <button class="btn btn-success btn-icon btn-round hidden-sm-down float-right m-l-10" data-toggle="modal" data-target="#fileAdd">
+                    <i class="zmdi zmdi-plus"></i>
+                </button>
+                <button class="btn btn-primary btn-icon btn-round hidden-sm-down float-right m-l-10" type="button" onclick="training()">
+                    <i class="zmdi zmdi-refresh"></i>
+                </button>         
+            </div>
+        </div>
+    </div>
+    <div style="position: fixed; bottom:30px;">
+        {% if success_message %}
+            <div id="alert" class="alert alert-success">
+                {{ success_message }}
+            </div>
+        {% elif error_message %}
+            <div id="alert" class="alert alert-danger">
+                {{ error_message }}
+            </div>
+        {% else %}
+            <div id="alert" style="display: none;"></div>
+        {% endif %}    
+    </div>
+    <div class="container-fluid">
+        <div class="card widget_2">
+            <ul class="row clearfix list-unstyled m-b-0">
+                <li class="col-md-6 col-sm-12">
+                    <div class="body">
+                        <div class="row">
+                            <div class="col-12">
+                                <h5 class="m-t-0">PDF</h5>
+                                <h2>{{total_pdf}}</h2>
+                                <small class="info">{{train_results[4]}} entrenados</small>                                
+                            </div>
+                            <div class="col-12">
+                                <div class="progress m-t-10">
+                                <div class="progress-bar l-blush" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100" style="width: {{percent}}%;"></div>
+                                </div>                                
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li class="col-md-6 col-sm-12">
+                    <div class="body">
+                        <div class="row">
+                            <div class="col-12">
+                                <h5 class="m-t-0">Páginas</h5>
+                                <h2>{{train_results[3]}}</h2>
+                                <small class="info">entrenadas</small>                                
+                            </div>
+                            <div class="col-12">
+                                <div class="progress m-t-10">
+                                <div class="progress-bar l-green" role="progressbar" aria-valuenow="12" aria-valuemin="0" aria-valuemax="100" style="width: 100%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div class="row clearfix">
+            {% for pdf in pdfs %}
+                <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
+                    <div class="card">
+                        <div class="file">
+                            <a href="#">
+                                <div class="hover">
+                                    <button type="button" class="btn btn-icon btn-icon-mini btn-round btn-danger" onclick="deletePdf('{{pdf[0]}}')">
+                                        <i class="zmdi zmdi-delete"></i>
+                                    </button>                                    
+                                </div>
+                                <div class="icon">
+                                    <i class="zmdi zmdi-file-text"></i>
+                                </div>
+                                <div class="file-name">
+                                    <p class="m-b-5 text-muted">{{pdf[1]}}</p>
+                                    <small>Tamaño: {{pdf[2]}} kb<span class="date text-muted">{{pdf[3]}}</span></small>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<div class="modal fade" id="fileAdd" tabindex="-1" role="dialog" aria-labelledby="fileAddLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="fileAddLabel">Registrar PDF</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form action="/add_file" method="POST" enctype="multipart/form-data">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <input type="file" name="file" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                </div>
+            </form>            
+        </div>
+    </div>
+</div>
+{% endblock %}

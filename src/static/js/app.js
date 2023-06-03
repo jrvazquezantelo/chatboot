@@ -13,4 +13,11 @@ $(document).ready(function() {
         $(this).find('textarea[name="question"]').val(question);
         $(this).find('textarea[name="answer"]').val(answer);
     });
+
 });
+function deletePdf(pdfId) {
+    window.location.href = '/delete_file/' + pdfId;
+}    
+function training() {
+    window.location.href = '/edit_train';
+}    
