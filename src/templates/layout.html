@@ -1,7 +1,73 @@
+﻿<!doctype html>
+<html class="no-js " lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+<meta name="description" content="Responsive Bootstrap 4 and web Application ui kit.">
 
-<h1>menu</h1>
+<title>:: Admin Chatbot::</title>
+<!-- Favicon-->
+<link rel="icon" href="favicon.ico" type="image/x-icon">
+<link rel="stylesheet" href="{{ url_for('static', filename='plugins/bootstrap/css/bootstrap.min.css')}}">
+<!-- Custom Css -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/main.css')}}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/color_skins.css')}}">
+</head>
+<body class="theme-blue">
+<!-- Page Loader -->
+<div class="page-loader-wrapper">
+    <div class="loader">
+        <div class="m-t-30"><img class="zmdi-hc-spin" src="static/images/logo.svg" width="48" height="48" alt="Compass"></div>
+        <p>Cargando...</p>
+    </div>
+</div>
+
+<!-- Overlay For Sidebars -->
+<div class="overlay"></div>
+
+<!-- Top Bar -->
+<nav class="navbar">
+    <div class="col-12">        
+        <div class="navbar-header">
+            <a href="javascript:void(0);" class="bars"></a>
+            <a class="navbar-brand" href="/"><img src="static/images/logo.svg" width="30" alt="Admin"><span class="m-l-10">Admin</span></a>
+        </div>
+        <ul class="nav navbar-nav navbar-left">
+            <li><a href="javascript:void(0);" class="ls-toggle-btn" data-close="true"><i class="zmdi zmdi-swap"></i></a></li>            
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+            <li>
+                <a href="javascript:void(0);" class="fullscreen hidden-sm-down" data-provide="fullscreen" data-close="true"><i class="zmdi zmdi-fullscreen"></i></a>
+            </li>
+            <li><a href="logout" class="mega-menu" data-close="true"><i class="zmdi zmdi-power"></i></a></li>
+        </ul>
+    </div>
+</nav>
+
+<!-- Left Sidebar -->
+<aside id="leftsidebar" class="sidebar">
+    <div class="menu">
+        <ul class="list">
+            <li>
+                <div class="user-info">
+                    <div class="image"><a href="profile.html"><img src="static/images/profile_av.jpg" alt="User"></a></div>
+                </div>
+            </li>
+            <li class="header">MAIN</li>
+            <li><a href="/"><i class="zmdi zmdi-home"></i><span>Dashboard</span></a></li>            
+            <li><a href="question"><i class="zmdi zmdi-comment"></i><span>Preguntas</span></a></li>
+            <li><a href="archivos"><i class="zmdi zmdi-file"></i><span>Archivos</span></a></li>
+        </ul>
+    </div>
+</aside>
 
 {% block content %}
 {% endblock %}
 
-<h1>pie</h1>
+<!-- Jquery Core Js --> 
+<script src="{{ url_for('static', filename='bundles/libscripts.bundle.js')}}"></script>
+<script src="{{ url_for('static', filename='bundles/vendorscripts.bundle.js')}}"></script>
+<script src="{{ url_for('static', filename='bundles/mainscripts.bundle.js')}}"></script> 
+</body>
+</html>

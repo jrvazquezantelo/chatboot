@@ -1,15 +1,8 @@
 from flask import render_template, request, redirect, session
 import bcrypt
-import mysql.connector
+from database import db
 
 from app import app
-
-db = mysql.connector.connect(
-    host='localhost',
-    user='root',
-    password='',
-    database='b11'
-)
 
 def verificar_autenticacion(func):
     def wrapper(*args, **kwargs):
@@ -39,12 +32,16 @@ def login():
                 session['username'] = username
                 return redirect('/')
 
-        error_message = 'Credenciales inválidas. Inténtalo nuevamente.'
+            # La contraseña no coincide, mostrar mensaje de error
+            error_message = 'Clave incorrecta. Inténtalo nuevamente.'
+        else:
+            # El usuario no existe, mostrar mensaje de error
+            error_message = 'El usuario no existe.'
+
         return render_template('login.html', error_message=error_message)
 
     if 'username' in session:
         return redirect('/')
-    
     return render_template('login.html')
 
 @app.route('/logout')
