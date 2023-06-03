@@ -115,8 +115,8 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form>
-                    <input type="hidden" name="id" id="editId"> <!-- Campo oculto para almacenar el ID -->
+                <form action="/edit_conversation" method="POST">
+                    <input type="hidden" name="id" id="editId"> <!-- Hidden field to store the ID -->
                     <div class="form-group">
                         <label>Pregunta</label>
                         <textarea rows="4" class="form-control no-resize border" name="question" required placeholder="Escribe una pregunta.."></textarea>
@@ -125,13 +125,14 @@
                         <label>Respuesta</label>
                         <textarea rows="4" class="form-control no-resize border" name="answer" required placeholder="Escribe una respuesta.."></textarea>
                     </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                        <button type="submit" class="btn btn-primary">Guardar cambios</button>
+                    </div>
                 </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                <button type="button" class="btn btn-primary">Guardar cambios</button>
             </div>
         </div>
     </div>
 </div>
+
 {% endblock %}

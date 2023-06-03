@@ -50,6 +50,34 @@ def add_conversation():
                 cursor.close()
     return redirect('/conversation')
     
+@app.route('/edit_conversation', methods=['POST'])
+def edit_conversation():
+    if request.method == 'POST':
+        id = request.form['id']
+        question = request.form['question']
+        answer = request.form['answer']
+        cursor = db.cursor()
+
+        # Verificar si la pregunta ya existe en la base de datos, excluyendo la conversación actual
+        check_query = "SELECT * FROM conversations WHERE question = %s AND id <> %s"
+        cursor.execute(check_query, (question, id))
+        existing_conversation = cursor.fetchone()
+
+        if existing_conversation:
+            session['error_message'] = 'La pregunta ya existe en la base de datos.'
+        else:
+            query = "UPDATE conversations SET question = %s, answer = %s WHERE id = %s"
+            try:
+                cursor.execute(query, (question, answer, id))
+                db.commit()
+                session['success_message'] = 'La conversación se ha actualizado exitosamente.'
+            except Exception as e:
+                db.rollback()
+                session['error_message'] = 'Ocurrió un error al actualizar la conversación.'
+            finally:
+                cursor.close()
+    return redirect('/conversation')
+    
 @app.route('/delete_conversation/<int:conversation_id>', methods=['GET'])
 def delete_conversation(conversation_id):
     cursor = db.cursor()
