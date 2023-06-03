@@ -93,35 +93,72 @@ def delete_conversation(conversation_id):
         cursor.close()
     return redirect('/conversation')
 
-@app.route('/chatboot', methods=['POST'])
-def chatboot():
-    os.environ["OPENAI_API_KEY"] = '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'
-    storage_context = llama_index.StorageContext.from_defaults(persist_dir='./storage')
-    index = llama_index.load_index_from_storage(storage_context)
-    pregunta = "¿ cuantas horas dura este curso?"  # Puedes cambiar la pregunta aquí
-    respuesta = index.as_query_engine().query(pregunta)  # Realiza la consulta con la pregunta
-    return str(respuesta)
 
 @app.route('/train')
 def train():
-    os.environ["OPENAI_API_KEY"] = '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'
-    ruta_script = os.path.abspath(__file__)
-    ruta_raiz = os.path.dirname(ruta_script)
-    ruta_static_data = os.path.join(ruta_raiz, 'static', 'data')
-    sheets = llama_index.SimpleDirectoryReader(ruta_static_data).load_data()
-    number_of_sheets = len(sheets)
-    if number_of_sheets > 0:
-        model = llama_index.LLMPredictor(llm=ChatOpenAI(temperature=0, model_name='gpt-3.5-turbo'))
-        service_context = llama_index.ServiceContext.from_defaults(llm_predictor=model)
-        index = llama_index.GPTVectorStoreIndex.from_documents(sheets, service_context = service_context)
-        index.storage_context.persist()
-        return f'Enhorabuena cantidad de hojas entrenadas: {number_of_sheets}'
-    else:
-        return 'No hay datos disponibles para el entrenamiento'
+    cursor = db.cursor()
+    check_query = "SELECT api_key FROM token"
+    cursor.execute(check_query)
+    existing_token = cursor.fetchone()
+    if existing_token:
+        os.environ["OPENAI_API_KEY"] = existing_token[0]
+        ruta_script = os.path.abspath(__file__)
+        ruta_raiz = os.path.dirname(ruta_script)
+        ruta_static_data = os.path.join(ruta_raiz, 'static', 'data')
+        sheets = llama_index.SimpleDirectoryReader(ruta_static_data).load_data()
+        number_of_sheets = len(sheets)
+        if number_of_sheets > 0:
+            model = llama_index.LLMPredictor(llm=ChatOpenAI(temperature=0, model_name='gpt-3.5-turbo'))
+            service_context = llama_index.ServiceContext.from_defaults(llm_predictor=model)
+            index = llama_index.GPTVectorStoreIndex.from_documents(sheets, service_context = service_context)
+            index.storage_context.persist()
+            return f'Enhorabuena cantidad de hojas entrenadas: {number_of_sheets}'
+        else:
+            return 'No hay datos disponibles para el entrenamiento'
 
-@app.route('/pruebas', methods=['POST'])
-def pruebas():
-    return "prueba"
+@app.route('/chatboot', methods=['POST'])
+def chatboot():
+    if request.method == 'POST':
+        if request.is_json:
+            data = request.get_json()
+            question = data.get('question')
+        else:
+            question = request.form.get('question')
+
+        if not question:
+            error_message = {
+                'error': 'Bad Request',
+                'message': 'El parámetro "question" es obligatorio. Por favor, proporcione una pregunta válida.'
+            }
+            return jsonify(error_message), 400
+
+        cursor = db.cursor()
+        check_query = "SELECT answer FROM conversations WHERE question = %s"
+        cursor.execute(check_query, (question,))
+        existing_conversation = cursor.fetchone()
+
+        if existing_conversation:
+            answer = existing_conversation[0]
+        else:
+            cursor = db.cursor()
+            check_query = "SELECT api_key FROM token"
+            cursor.execute(check_query)
+            existing_token = cursor.fetchone()
+            if existing_token:
+                os.environ["OPENAI_API_KEY"] = existing_token[0]
+                storage_context = llama_index.StorageContext.from_defaults(persist_dir='./storage')
+                index = llama_index.load_index_from_storage(storage_context)
+                processed_question = "¿" + question + "? responde en español y no diga los nombres de los archivos"
+                respuesta = index.as_query_engine().query(processed_question)  # Realiza la consulta con la pregunta
+                answer = str(respuesta)
+                # Guardar la pregunta y respuesta en la base de datos
+                insert_query = "INSERT INTO conversations (question, answer) VALUES (%s, %s)"
+                cursor.execute(insert_query, (question, answer))
+                db.commit()
+            else:
+                answer = 'No se encontró una respuesta para la pregunta proporcionada.'
+
+        return jsonify({'answer': answer})
 
 @app.errorhandler(404)
 def pagina_no_encontrada(e):
