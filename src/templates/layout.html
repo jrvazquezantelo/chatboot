@@ -6,13 +6,15 @@
 <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
 <meta name="description" content="Responsive Bootstrap 4 and web Application ui kit.">
 
-<title>:: Admin Chatbot::</title>
+<title>:: Admin ::</title>
 <!-- Favicon-->
 <link rel="icon" href="favicon.ico" type="image/x-icon">
 <link rel="stylesheet" href="{{ url_for('static', filename='plugins/bootstrap/css/bootstrap.min.css')}}">
 <!-- Custom Css -->
 <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css')}}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/color_skins.css')}}">
+<link rel="stylesheet" href="{{ url_for('static', filename='plugins/footable-bootstrap/css/footable.bootstrap.min.css')}}">
+<link rel="stylesheet" href="{{ url_for('static', filename='plugins/footable-bootstrap/css/footable.standalone.min.css')}}">
 </head>
 <body class="theme-blue">
 <!-- Page Loader -->
@@ -56,7 +58,7 @@
             </li>
             <li class="header">MAIN</li>
             <li><a href="/"><i class="zmdi zmdi-home"></i><span>Dashboard</span></a></li>            
-            <li><a href="question"><i class="zmdi zmdi-comment"></i><span>Preguntas</span></a></li>
+            <li><a href="conversation"><i class="zmdi zmdi-comment"></i><span>Preguntas</span></a></li>
             <li><a href="archivos"><i class="zmdi zmdi-file"></i><span>Archivos</span></a></li>
         </ul>
     </div>
@@ -69,5 +71,8 @@
 <script src="{{ url_for('static', filename='bundles/libscripts.bundle.js')}}"></script>
 <script src="{{ url_for('static', filename='bundles/vendorscripts.bundle.js')}}"></script>
 <script src="{{ url_for('static', filename='bundles/mainscripts.bundle.js')}}"></script> 
+<script src="{{ url_for('static', filename='bundles/footable.bundle.js')}}"></script> 
+<script src="{{ url_for('static', filename='js/pages/tables/footable.js')}}"></script> 
+<script src="{{ url_for('static', filename='js/app.js')}}"></script> 
 </body>
 </html>

@@ -1,4 +1,4 @@
-from flask import render_template, jsonify
+from flask import render_template, jsonify, request, redirect, session
 from app import app
 from auth import verificar_autenticacion
 from database import db
@@ -12,14 +12,58 @@ from langchain.chat_models import ChatOpenAI
 def home():
     return render_template('home.html')
 
-@app.route('/question')
-def question():
+@app.route('/conversation')
+def conversation():
     cursor = db.cursor()
-    query = "SELECT id, question, answer, valoration FROM `conversations`;"
+    query = "SELECT id, question, answer FROM `conversations`;"
     cursor.execute(query)
     results = cursor.fetchall() 
     cursor.close()
-    return render_template('question.html', conversations=results)
+    success_message = session.pop('success_message', None)
+    error_message = session.pop('error_message', None)
+    return render_template('conversation.html', conversations=results, success_message=success_message, error_message=error_message)
+
+@app.route('/add_conversation', methods=['POST'])
+def add_conversation():
+    if request.method == 'POST':
+        question = request.form['question']
+        answer = request.form['answer']
+        cursor = db.cursor()
+        
+         # Verificar si la pregunta ya existe en la base de datos
+        check_query = "SELECT * FROM conversations WHERE question = %s"
+        cursor.execute(check_query, (question,))
+        existing_conversation = cursor.fetchone()
+            
+        if existing_conversation:
+            session['error_message'] = 'La pregunta ya existe en la base de datos.'
+        else:
+            query = "INSERT INTO conversations (question, answer) VALUES (%s, %s)"  # Corrección en la consulta SQL
+            try:
+                cursor.execute(query, (question, answer))
+                db.commit()
+                session['success_message'] = 'La conversación se ha guardado exitosamente.'
+            except Exception as e:
+                db.rollback()
+                session['error_message'] = 'Ocurrió un error al guardar la conversación.'
+            finally:
+                cursor.close()
+    return redirect('/conversation')
+    
+@app.route('/delete_conversation/<int:conversation_id>', methods=['GET'])
+def delete_conversation(conversation_id):
+    cursor = db.cursor()
+    query = "DELETE FROM conversations WHERE id = %s"
+    try:
+        cursor.execute(query, (conversation_id,))
+        db.commit()
+        session['success_message'] = 'La conversación se ha eliminado exitosamente.'
+    except Exception as e:
+        db.rollback()
+        session['error_message'] = 'Ocurrió un error al eliminar la conversación.'
+    finally:
+        cursor.close()
+    return redirect('/conversation')
 
 @app.route('/chatboot', methods=['POST'])
 def chatboot():
