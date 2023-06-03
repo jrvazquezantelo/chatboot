@@ -1,4 +1,4 @@
-from flask import render_template, jsonify, request, redirect, session
+from flask import render_template, jsonify, request, redirect, session, url_for
 from app import app
 from auth import verificar_autenticacion
 from database import db
@@ -77,12 +77,23 @@ def chatboot():
 @app.route('/train')
 def train():
     os.environ["OPENAI_API_KEY"] = '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'
-    pdf = llama_index.SimpleDirectoryReader("C:\\Users\\jrvaz\\OneDrive\\Desktop\\chatbot-api\\datos").load_data()
-    modelo = llama_index.LLMPredictor(llm=ChatOpenAI(temperature=0, model_name='gpt-3.5-turbo'))
-    service_context = llama_index.ServiceContext.from_defaults(llm_predictor=modelo)
-    index = llama_index.GPTVectorStoreIndex.from_documents(pdf, service_context = service_context)
-    index.storage_context.persist()
-    return "ok" 
+    ruta_script = os.path.abspath(__file__)
+    ruta_raiz = os.path.dirname(ruta_script)
+    ruta_static_data = os.path.join(ruta_raiz, 'static', 'data')
+    sheets = llama_index.SimpleDirectoryReader(ruta_static_data).load_data()
+    number_of_sheets = len(sheets)
+    if number_of_sheets > 0:
+        model = llama_index.LLMPredictor(llm=ChatOpenAI(temperature=0, model_name='gpt-3.5-turbo'))
+        service_context = llama_index.ServiceContext.from_defaults(llm_predictor=model)
+        index = llama_index.GPTVectorStoreIndex.from_documents(sheets, service_context = service_context)
+        index.storage_context.persist()
+        return f'Enhorabuena cantidad de hojas entrenadas: {number_of_sheets}'
+    else:
+        return 'No hay datos disponibles para el entrenamiento'
+
+@app.route('/pruebas', methods=['POST'])
+def pruebas():
+    return "prueba"
 
 @app.errorhandler(404)
 def pagina_no_encontrada(e):
