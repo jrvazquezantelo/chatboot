@@ -230,6 +230,11 @@ def edit_train():
         except Exception as e:         
             session['error_message'] = 'Ocurrió un error en el entrenamiento'.format(str(e))
         finally:
+            # Ejecutar consulta UPDATE
+            cursor = db.cursor()
+            update_query = "UPDATE train SET pages = %s WHERE id = 1"
+            cursor.execute(update_query, (number_of_sheets,))
+            db.commit()
             return redirect('/train')
         
 @app.route('/chatboot', methods=['POST'])
