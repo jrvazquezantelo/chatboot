@@ -200,6 +200,10 @@ def execute_query(query):
     cursor.close()
     return results
 
+@app.route('/chat')
+def chat():
+    return render_template('chat.html')
+
 @app.route('/edit_train')
 def edit_train():
     cursor = db.cursor()

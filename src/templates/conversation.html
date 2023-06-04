@@ -14,19 +14,6 @@
             </div>
         </div>
     </div>
-    <div style="position: fixed; bottom:30px;">
-        {% if success_message %}
-            <div id="alert" class="alert alert-success">
-                {{ success_message }}
-            </div>
-        {% elif error_message %}
-            <div id="alert" class="alert alert-danger">
-                {{ error_message }}
-            </div>
-        {% else %}
-            <div id="alert" style="display: none;"></div>
-        {% endif %}    
-    </div>
     <div class="container-fluid">
         <div class="row clearfix">
             <div class="col-lg-12">
